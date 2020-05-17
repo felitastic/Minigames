@@ -11,9 +11,9 @@ public class PlayerInput : MonoBehaviour
     private float minSwipeDistance = 0.4f;
     private Vector3 clickStartPos;
     private Vector3 clickEndPos;
-    private Piece clickedPiece;
+    private Tile clickedPiece;
 
-    public static event System.Action<Piece, eSwipeDir> OnPieceMove = delegate { };
+    public static event System.Action<Tile, eSwipeDir> OnPieceMove = delegate { };
 
     private void Update()
     {
@@ -35,7 +35,10 @@ public class PlayerInput : MonoBehaviour
                 float distY = Mathf.Abs(clickEndPos.y - clickStartPos.y);
                 //Only count as move if swipe movement was "strong" enough
                 if (distX > minSwipeDistance || distY > minSwipeDistance)
+                {
+                    GameManager.Instance.SetGameState(eGameState.matching);
                     OnPieceMove(clickedPiece, SwipeDirection(SwipeAngle(clickStartPos, clickEndPos)));
+                }
                 //clear clickedPiece just to be sure
                 clickedPiece = null;
             }
@@ -44,10 +47,10 @@ public class PlayerInput : MonoBehaviour
     /// <summary>
     /// Returns Piece if one was hit with raycast at the given position 
     /// </summary>
-    private Piece ClickedPiece(Vector3 hitPos)
+    private Tile ClickedPiece(Vector3 hitPos)
     {
-        RaycastHit2D hit = Physics2D.Raycast(hitPos, Vector2.zero);
-        return hit.collider != null ? hit.collider.GetComponent<Piece>() : null;
+        RaycastHit2D hit = Physics2D.Raycast(hitPos, Vector3.zero);
+        return hit.collider != null ? hit.collider.GetComponent<Tile>() : null;
     }
     /// <summary>
     /// Returns the angle between 2 Vectors

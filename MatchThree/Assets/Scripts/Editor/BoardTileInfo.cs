@@ -2,7 +2,7 @@
 using UnityEditor;
 
 /// <summary>
-/// Shows position of the piece in the inspector
+/// Shows information about the pieces in the inspector
 /// </summary>
 public class BoardTileInfo
 {
@@ -16,24 +16,24 @@ public class BoardTileInfo
     }
 
     [DrawGizmo(GizmoType.NonSelected)]
-    static void DrawTilePos(Piece piece, GizmoType gizmoType)
+    static void DrawTilePos(Tile piece, GizmoType gizmoType)
     {
         GUIStyle style = Style(Color.cyan);
-        //string pos = piece.name;
-        string pos = Mathf.RoundToInt(piece.transform.position.x)+","+ Mathf.RoundToInt(piece.transform.position.y);
-        Handles.Label(new Vector3(piece.transform.position.x - 0.45f, piece.transform.position.y + 0.5f, piece.transform.position.z), pos, style);
+        string ID = piece.name;
+        //string pos = Mathf.RoundToInt(piece.transform.position.x)+","+ Mathf.RoundToInt(piece.transform.position.y);
+        Handles.Label(new Vector3(piece.transform.position.x - 0.45f, piece.transform.position.y + 0.5f, piece.transform.position.z), ID, style);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(piece.transform.position, new Vector3(1, 1, 0));
 
     }
     
     [DrawGizmo(GizmoType.Selected)]
-    static void DrawSelectedTilePos(Piece piece, GizmoType gizmoType)
+    static void DrawSelectedTilePos(Tile piece, GizmoType gizmoType)
     {
         GUIStyle style = Style(Color.red);
-        //string pos = piece.name;
-        string pos = Mathf.RoundToInt(piece.transform.position.x) + "," + Mathf.RoundToInt(piece.transform.position.y);
-        Handles.Label(new Vector3(piece.transform.position.x - 0.45f, piece.transform.position.y + 0.5f, piece.transform.position.z), pos, style);
+        string ID = piece.name;
+        //string pos = Mathf.RoundToInt(piece.transform.position.x) + "," + Mathf.RoundToInt(piece.transform.position.y);
+        Handles.Label(new Vector3(piece.transform.position.x - 0.45f, piece.transform.position.y + 0.5f, piece.transform.position.z), ID, style);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(piece.transform.position, new Vector3(1, 1, 0));
     }

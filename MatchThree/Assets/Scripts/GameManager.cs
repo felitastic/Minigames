@@ -1,7 +1,4 @@
-﻿using core;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -11,15 +8,17 @@ public class GameManager : Singleton<GameManager>
     public int Height = 5;
     [Tooltip("Order: Orange, Apple, Coconut, Melon, Passionfruit")]
     public Sprite[] PieceSprites;
-    public Fruit[,] Pieces { get; protected set; }
+    public Piece[,] Pieces { get; protected set; }
     public eGameState GameState { get; private set; }
 
     public static event System.Action<GameManager> OnStart = delegate { };
     public static event System.Action OnRestart = delegate { };
 
+    private eGameState prePauseState = eGameState.running;
+
     private void Awake()
     {
-        SetGameState(eGameState.loading);
+        SetGameState(eGameState.setup);
     }
 
     private void Start()
@@ -35,26 +34,26 @@ public class GameManager : Singleton<GameManager>
         GameState = newState;
     }
     /// <summary>
-    /// Initiates the 2D piece array with width and height
+    /// Initiates the 2D piece array with width and height (+1 for upper spawn when falling down)
     /// </summary>
     public void SetBoardSize()
     {
-        Pieces = new Fruit[Width, Height];
+        Pieces = new Piece[Width, Height];
     }
     /// <summary>
     /// Sets the pieces position in the piece array to row, column
     /// </summary>
-    public void SetPiecePosInArray(Fruit fruit, int row, int column)
+    public void SetPiecePosInArray(Piece piece, int xPos, int yPos)
     {
-        Pieces[row, column] = fruit;
+        Pieces[xPos, yPos] = piece;
     }
     /// <summary>
     /// Returns a piece if there is one at the given position in the array
     /// </summary>
-    public Fruit GetFruit(int row, int column)
+    public Piece GetFruit(int xPos, int yPos)
     {
-        if (row < Width && row >= 0 && column < Height && column >= 0)
-            return Pieces[row, column];
+        if (xPos < Width && xPos >= 0 && yPos < Height && yPos >= 0)
+            return Pieces[xPos, yPos];
 
         return null;
     }
@@ -63,11 +62,22 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void Restart()
     {
-        SetGameState(eGameState.loading);
-        foreach(Fruit fruit in Pieces)
+        SetGameState(eGameState.setup);
+        foreach(Piece piece in Pieces)
         {
-            Destroy(fruit.piece.gameObject);
+            Destroy(piece.TileObject.gameObject);
         }
         OnRestart();
+    }
+
+    public void Pause()
+    {
+        prePauseState = GameState;
+        SetGameState(eGameState.paused);
+    }
+
+    public void UnPause()
+    {
+        SetGameState(prePauseState);
     }
 }

@@ -1,116 +1,76 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿/// <summary>
+/// Data container, knows position in grid, piece type and holds reference to a tile gameobject
+/// </summary>
+public class Piece
+{
+    public IntPos2D GridPos { get; private set; }
+    public int Type { get; private set; }
+    public Tile TileObject { get; private set; }
+    public int FallPosY { get; private set; }
+
+    // Constructor
+    public Piece(int xPos, int yPos, Tile tile, int type)
+    {        
+        this.TileObject = tile;
+        this.Type = type;
+        GridPos = new IntPos2D(xPos, yPos);
+        SetNewType(type);
+    }
+
+    /// <summary>
+    /// Changes type and sprite of the piece
+    /// </summary>
+    public void SetNewType(int type)
+    {
+        this.Type = type;
+    }
+
+    /// <summary>
+    /// Changes the pieces position in the grid array
+    /// </summary>
+    public void SetGridPosition(int newX, int newY)
+    {
+        GridPos.x = newX;
+        GridPos.y = newY;
+        GameManager.Instance.SetPiecePosInArray(this, newX, newY);
+    }
+
+    public void SetFallPosition(int fallPosY)
+    {
+        FallPosY = fallPosY;
+    }
+
+    /// <summary>
+    /// Returns true if the type of the other piece matches the type of this piece
+    /// </summary>
+    public bool MatchesWith(Piece otherPiece)
+    {
+        return this.Type == otherPiece.Type ? true : false;
+    }
+
+    /// <summary>
+    /// Swaps this pieces position with the other one and vise versa
+    /// </summary>
+    public void Swap(Piece piece)
+    {
+        int newX = piece.GridPos.x;
+        int newY = piece.GridPos.y;
+        piece.SetGridPosition(GridPos.x, GridPos.y);
+        SetGridPosition(newX, newY);
+    }
+}
 
 /// <summary>
-/// Controls movement and animation of the "fruit" tiles
-/// Is instantiated at game start via prefab and referenced by the fruit class
+/// Takes two ints for pos x and pos x
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Collider2D))]
-public class Piece : MonoBehaviour
+public class IntPos2D
 {
-    [SerializeField]
-    private SpriteRenderer spriteRend;
-    [SerializeField]
-    private Animator anim;
-    private float destroyAnimTime;
-    private bool moving;
+    public int x;
+    public int y;
 
-    private void Awake()
+    public IntPos2D(int x, int y)
     {
-        moving = false;
-        spriteRend = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
-        GetAnimClipTime();
-    }
-
-    /// <summary>
-    /// Checks the animation clips for one called "destroy" and gets its clip time
-    /// </summary>
-    private void GetAnimClipTime()
-    {
-        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
-        foreach (AnimationClip clip in clips)
-        {
-            switch (clip.name)
-            {
-                case "destroy":
-                    destroyAnimTime = clip.length;
-                    return;
-                default:
-                    destroyAnimTime = 0.5f;
-                    break;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Called by the fruit class when the sprite/type changes
-    /// </summary>
-    /// <param name="sprite"></param>
-    public void SetSprite(Sprite sprite)
-    {
-        spriteRend.sprite = sprite;
-    }
-
-    /// <summary>
-    /// Moves piece to the new location; if !noMatch it will move back to the old position afterwards
-    /// </summary>
-    public IEnumerator SwapPosition(Vector3 newPos, bool noMatch = false)
-    {
-        moving = true;
-        Vector3 oldPos = transform.position;
-
-        while(moving)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, newPos, 0.05f);
-            if (newPos.Equals(transform.position))
-            {
-                if (noMatch)
-                {
-                    StartCoroutine(SwapPosition(oldPos));
-                    yield break;
-                }
-                else
-                {
-                    moving = false;
-                }
-            }
-            yield return null;
-        }
-    }
-
-    /// <summary>
-    /// Coroutine for making the pieces fall into their new spot after a match has been destroyed
-    /// </summary>
-    private IEnumerator FallToNewPos()
-    {
-        Vector2 oldPos;
-        Vector2 goalPos;
-        //fall down until newPos reached
-        yield return null;
-    }
-
-    /// <summary>
-    /// Reactives the piece at the top to make to fall into the board again
-    /// </summary>
-    public void Reactivate()
-    {
-        anim.SetBool("destroy", false);
-        //StartCoroutine(FallToNewPos(this,transform.position, ))
-    }
-
-    /// <summary>
-    /// Calley by the board to "destroy" this piece when matched
-    /// </summary>
-    public IEnumerator Deactivate()
-    {
-        while (moving)
-            yield return null;
-
-        anim.SetBool("destroy", true);
-        //play animation for destruction
-        yield return new WaitForSeconds(destroyAnimTime);
+        this.x = x;
+        this.y = y;
     }
 }

@@ -1,19 +1,11 @@
-﻿//public enum eFruit
-//{
-//    Orange = 0,
-//    Apple = 1,
-//    Coconut = 2,
-//    Melon = 3,
-//    Passionfruit = 4
-//}
-
-public enum eGameState
+﻿public enum eGameState
 {
-    loading,
+    setup,
     running,
+    matching,
+    falling,
     paused,
-    win,
-    lose
+    end
 }
 
 public enum eSwipeDir
