@@ -16,7 +16,7 @@ public class UIController : MonoBehaviour
     {
         GameManager.OnScoreUpdate += SetScore;
         GameManager.OnMoveChange += SetMovesCount;
-        GameManager.OnRestart += HideResult;
+        GameManager.OnSetup += HideResult;
         GameManager.OnGameEnd += GameEnded;
     }
 
@@ -29,7 +29,8 @@ public class UIController : MonoBehaviour
 
         if (Input.GetKeyDown(RestartButton))
         {
-            GameManager.Instance.Restart();    
+            GameManager.Instance.StartNewGame();
+            //blubb restart
         }
     }
 
@@ -62,5 +63,10 @@ public class UIController : MonoBehaviour
             ResultCanvas.alpha += 0.1f;
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    private void ResetUI()
+    {
+
     }
 }

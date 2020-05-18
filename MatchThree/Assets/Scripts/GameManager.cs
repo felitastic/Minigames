@@ -1,31 +1,69 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Knows the hard facts such as game state, board size, max moves and all the Tile objects on the grid
+/// </summary>
 public class GameManager : Singleton<GameManager>
 {
     protected GameManager() { }
 
+    [Range(4,18)]
     public int Width = 10;
+    [Range(4,10)]
     public int Height = 5;
-    [Tooltip("Order: Orange, Apple, Coconut, Melon, Passionfruit")]
+    [Range(10, 100)]
+    public int MaxMoves;
     public Sprite[] PieceSprites;
-    public Piece[,] Pieces { get; protected set; }
+
+    private eGameState prePauseState = eGameState.running;
+    private int fullScore;
+    private int movesLeft;
+
+    public Piece[,] Pieces { get; private set; }
     public eGameState GameState { get; private set; }
 
     public static event System.Action<GameManager> OnStart = delegate { };
-    public static event System.Action OnRestart = delegate { };
-
-    private eGameState prePauseState = eGameState.running;
+    public static event System.Action OnSetup = delegate { };
+    public static event System.Action<int> OnScoreUpdate = delegate { };
+    public static event System.Action<int> OnMoveChange = delegate { };
+    public static event System.Action OnGameEnd = delegate { };
 
     private void Awake()
     {
+        Pieces = new Piece[0, 0];
+        //print("piece count: " + Pieces.Length);
         SetGameState(eGameState.setup);
     }
 
     private void Start()
     {
-        SetBoardSize();
+        //print("GM calls Startup");
         OnStart(this);
+        StartNewGame();
     }
+
+    /// <summary>
+    /// Sets all parameters to their initial value, sets board size and camera position
+    /// </summary>
+    public void StartNewGame()
+    {
+        SetGameState(eGameState.setup);
+        movesLeft = MaxMoves;
+        fullScore = 0;
+        UpdateUI();
+        SetCameraPosition();
+        OnSetup();
+    }
+
+    /// <summary>
+    /// Sends actions with all current UI values out
+    /// </summary>
+    private void UpdateUI()
+    {
+        OnScoreUpdate(fullScore);
+        OnMoveChange(movesLeft);
+    }
+
     /// <summary>
     /// Changes the GameState
     /// </summary>
@@ -34,40 +72,67 @@ public class GameManager : Singleton<GameManager>
         GameState = newState;
     }
     /// <summary>
-    /// Initiates the 2D piece array with width and height (+1 for upper spawn when falling down)
+    /// Initiates the 2D piece array with width and height 
     /// </summary>
-    public void SetBoardSize()
-    {
+    public void SetGridArray()
+    {        
         Pieces = new Piece[Width, Height];
     }
     /// <summary>
-    /// Sets the pieces position in the piece array to row, column
+    /// Sets the camera to center the board
+    /// </summary>
+    public void SetCameraPosition()
+    {
+        Camera.main.transform.position = new Vector3((float)(Width - 1) / 2, (float)(Height - 1) / 2, -10);
+    }
+    /// <summary>
+    /// Sets the pieces position in the piece array to x, y
     /// </summary>
     public void SetPiecePosInArray(Piece piece, int xPos, int yPos)
     {
         Pieces[xPos, yPos] = piece;
     }
     /// <summary>
+    /// Adds gain to the final score
+    /// </summary>
+    public void AddToScore(int gain)
+    {
+        print(fullScore + " + " + gain);
+        fullScore += gain;
+        OnScoreUpdate(fullScore);
+    }
+    /// <summary>
+    /// Subtracts one move from the moves the player has left
+    /// </summary>
+    public void SubstractOneMove()
+    {
+        movesLeft -= 1;
+        OnMoveChange(movesLeft);
+    }
+
+    /// <summary>
     /// Returns a piece if there is one at the given position in the array
     /// </summary>
-    public Piece GetFruit(int xPos, int yPos)
+    public Piece GetPieceAt(int xPos, int yPos)
     {
         if (xPos < Width && xPos >= 0 && yPos < Height && yPos >= 0)
             return Pieces[xPos, yPos];
 
         return null;
     }
+
     /// <summary>
-    /// Destroys all pieces and calls board to respawn them
+    /// Returns true if the condition for the end of the game is given (no moves left)
     /// </summary>
-    public void Restart()
+    public bool GameEnd()
     {
-        SetGameState(eGameState.setup);
-        foreach(Piece piece in Pieces)
+        if (movesLeft <= 0)
         {
-            Destroy(piece.TileObject.gameObject);
+            SetGameState(eGameState.end);
+            OnGameEnd();
+            return true;
         }
-        OnRestart();
+        return false;
     }
 
     public void Pause()
@@ -79,5 +144,68 @@ public class GameManager : Singleton<GameManager>
     public void UnPause()
     {
         SetGameState(prePauseState);
+    }
+
+    /// <summary>
+    /// Returns a random sprite/type within the sprite array
+    /// </summary>
+    public int RandomType()
+    {
+        return Random.Range(0, PieceSprites.Length);
+    }
+
+    /*
+     * According to the game rules, only the following "neighbours" have to be checked on Move/Spawn
+     * 
+     * Positions in Grid relative to "clickedPiece" (x,y):
+     *             | 0,+2|
+     *       |-1,+1| 0,+1|+1,+1|
+     * |-2, 0|-1, 0| x, y|+1, 0|+2, 0|
+     *       |-1,-1| 0,-1|+1,-1|
+     *             | 0,-2|
+     *             
+     *   given back if startUp = false:       given back if startUp = true:
+     *               | 2 |                (x = movedFruit not included in array)
+     *           | 3 | 1 | 4 |          
+     *      | 10 | 9 | 0 | 11| 12 |             | 2 | 0 | x |
+     *           | 8 | 5 | 7 |                      | 5 | 1 | 4 |    
+     *               | 6 |                              | 3 |
+     */
+    /// <summary>
+    /// Returns a list of all neighbouring pieces for the given piece
+    /// If startUp is true, it will return the neighbours of a freshly spawned piece
+    /// </summary>
+    public Piece[] FruitToCheck(Piece clickedPiece, bool startUp = false)
+    {
+        int xPos = clickedPiece.GridPos.x;
+        int yPos = clickedPiece.GridPos.y;
+        Piece[] neighbouringPiece = new Piece[13];
+
+        if (startUp)
+        {
+            neighbouringPiece[0] = GetPieceAt(xPos - 1, yPos);
+            neighbouringPiece[1] = GetPieceAt(xPos, yPos - 1);
+            neighbouringPiece[2] = GetPieceAt(xPos - 2, yPos);
+            neighbouringPiece[3] = GetPieceAt(xPos, yPos - 2);
+            neighbouringPiece[4] = GetPieceAt(xPos - 1, yPos - 1);
+            neighbouringPiece[5] = GetPieceAt(xPos + 1, yPos - 1);
+        }
+        else
+        {
+            neighbouringPiece[0] = GetPieceAt(xPos, yPos);
+            neighbouringPiece[1] = GetPieceAt(xPos, yPos + 1);
+            neighbouringPiece[2] = GetPieceAt(xPos, yPos + 2);
+            neighbouringPiece[3] = GetPieceAt(xPos - 1, yPos + 1);
+            neighbouringPiece[4] = GetPieceAt(xPos + 1, yPos + 1);
+            neighbouringPiece[5] = GetPieceAt(xPos, yPos - 1);
+            neighbouringPiece[6] = GetPieceAt(xPos, yPos - 2);
+            neighbouringPiece[7] = GetPieceAt(xPos + 1, yPos - 1);
+            neighbouringPiece[8] = GetPieceAt(xPos - 1, yPos - 1);
+            neighbouringPiece[9] = GetPieceAt(xPos - 1, yPos);
+            neighbouringPiece[10] = GetPieceAt(xPos - 2, yPos);
+            neighbouringPiece[11] = GetPieceAt(xPos + 1, yPos);
+            neighbouringPiece[12] = GetPieceAt(xPos + 2, yPos);
+        }
+        return neighbouringPiece;
     }
 }
