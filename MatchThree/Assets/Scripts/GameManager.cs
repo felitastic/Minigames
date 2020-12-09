@@ -20,8 +20,8 @@ public class GameManager : Singleton<GameManager>
     public Sprite[] PieceSprites;
 
     private eGameState prePauseState = eGameState.running;
-    private int fullScore;
-    private int movesLeft;
+    public int FullScore { get; private set; }
+    public int MovesLeft { get; private set; }
 
     public Piece[,] Pieces { get; private set; }
     public eGameState GameState { get; private set; }
@@ -81,8 +81,8 @@ public class GameManager : Singleton<GameManager>
                 Height = 8;
                 break;
             case 2:
-                Width = 14;
-                Height = 10;
+                Width = 12;
+                Height = 9;
                 break;
             default:
                 break;
@@ -110,8 +110,8 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void ResetGame()
     {
-        movesLeft = MaxMoves;
-        fullScore = 0;
+        MovesLeft = MaxMoves;
+        FullScore = 0;
         UpdateUI();
         SetCameraPosition();
         OnSetup();
@@ -122,8 +122,8 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void UpdateUI()
     {
-        OnScoreUpdate(fullScore);
-        OnMoveChange(movesLeft);
+        OnScoreUpdate(FullScore);
+        OnMoveChange(MovesLeft);
     }
 
     /// <summary>
@@ -132,6 +132,7 @@ public class GameManager : Singleton<GameManager>
     public void SetGameState(eGameState newState)
     {
         GameState = newState;
+        print(GameState.ToString());
     }
     /// <summary>
     /// Initiates the 2D piece array with width and height 
@@ -146,7 +147,8 @@ public class GameManager : Singleton<GameManager>
     public void SetCameraPosition()
     {
         Camera.main.transform.position = new Vector3((float)(Width - 1) / 2, (float)(Height - 1) / 2, -10);
-    }
+    } 
+
     /// <summary>
     /// Sets the pieces position in the piece array to x, y
     /// </summary>
@@ -160,16 +162,16 @@ public class GameManager : Singleton<GameManager>
     public void AddToScore(int gain)
     {
         //print(fullScore + " + " + gain);
-        fullScore += gain;
-        OnScoreUpdate(fullScore);
+        FullScore += gain;
+        OnScoreUpdate(FullScore);
     }
     /// <summary>
     /// Subtracts one move from the moves the player has left
     /// </summary>
     public void SubstractOneMove()
     {
-        movesLeft -= 1;
-        OnMoveChange(movesLeft);
+        MovesLeft -= 1;
+        OnMoveChange(MovesLeft);
     }
 
     /// <summary>
@@ -188,11 +190,11 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public bool GameEnd()
     {
-        if (movesLeft <= 0)
+        if (MovesLeft <= 0)
         {
             SetGameState(eGameState.end);
             //TODO: save score
-            allScores.Add(new ScoreEntry(1, "Blubbi", fullScore));
+            allScores.Add(new ScoreEntry(1, "Blubbi", FullScore));
             saveSystem.Save(allScores);
             OnGameEnd();
             return true;

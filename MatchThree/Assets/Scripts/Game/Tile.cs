@@ -32,13 +32,13 @@ public class Tile : MonoBehaviour
         GetAnimClipTime();
     }
 
-    public void Matched(bool isMatched = true)
-    {
-        if (isMatched)
-            spriteRend.color = Color.grey;
-        else
-            spriteRend.color = Color.white;
-    }
+    //public void Matched(bool isMatched = true)
+    //{
+    //    if (isMatched)
+    //        spriteRend.color = Color.grey;
+    //    else
+    //        spriteRend.color = Color.white;
+    //}
 
     /// <summary>
     /// Checks the animation clips for one called "destroy" and gets its clip time
@@ -64,9 +64,10 @@ public class Tile : MonoBehaviour
     /// Called by the fruit class when the sprite/type changes
     /// </summary>
     /// <param name="sprite"></param>
-    public void SetSprite(Sprite sprite)
+    public void SetGemType(int pType)
     {
-        spriteRend.sprite = sprite;
+        anim.SetInteger("type", pType);
+        //spriteRend.sprite = GameManager.Instance.PieceSprites[pType];
     }
 
     /// <summary>
@@ -151,20 +152,29 @@ public class Tile : MonoBehaviour
     /// <summary>
     /// Plays destroy animation, moves tile to its new position and changes the sprite
     /// </summary>
-    public IEnumerator Deactivate(int fallPosY, Sprite newSprite)
+    public IEnumerator Deactivate(int fallPosY, int pType)
     {
+        //play animation for destruction
+        //bool destroying = true;
+        //while (destroying)
+        //{
+        //    transform.localScale -= new Vector3(0.1f, 0.1f, 0.1f);
+        //    if (transform.localScale.x <= 0.0f)
+        //        destroying = false;
+
+        //    yield return null;
+        //}
         anim.SetBool("destroy", true);
         col.enabled = false;
-        //play animation for destruction
         yield return new WaitForSeconds(destroyAnimTime);
-        MoveToFallPosition(fallPosY, newSprite);
+        MoveToFallPosition(fallPosY, pType);
     }
 
-    private void MoveToFallPosition(int fallPosY, Sprite newSprite)
+    private void MoveToFallPosition(int fallPosY, int pType)
     {
         transform.position = new Vector3(transform.position.x, fallPosY, 0);
-        Matched(false);
-        SetSprite(newSprite);
+        //Matched(false);
+        SetGemType(pType);
         col.enabled = true;
         anim.SetBool("destroy", false);
     }

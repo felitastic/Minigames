@@ -15,7 +15,7 @@ public class CoreGame : MonoBehaviour
     private void Awake()
     {
         GameManager.OnStart += SetGM;
-        PlayerInput.OnPieceMove += SwapPieces;
+        PlayerInput.OnPieceMove += CheckForMatchesOnInput;
     }
 
     /// <summary>
@@ -27,104 +27,235 @@ public class CoreGame : MonoBehaviour
     }
 
     /// <summary>
-    /// Reacts to the player input, checks if there are matches and if positions need to be swapped
+    /// Reacts to the players input
     /// </summary>
-    private void SwapPieces(Tile tile, eSwipeDir swipeDir)
+    private void CheckForMatchesOnInput(Tile tile, eSwipeDir swipeDir)
     {
-        Piece piece = GM.GetPieceAt(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.y));
-        Piece otherPiece = piece;
+        Piece _piece = GM.GetPieceAt(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.y));
+        Piece _otherPiece = _piece;
 
         switch (swipeDir)
         {
             case eSwipeDir.none:
                 return;
             case eSwipeDir.up:
-                otherPiece = GM.GetPieceAt(piece.GridPos.x, piece.GridPos.y + 1);
+                _otherPiece = GM.GetPieceAt(_piece.GridPos.x, _piece.GridPos.y + 1);
                 break;
             case eSwipeDir.down:
-                otherPiece = GM.GetPieceAt(piece.GridPos.x, piece.GridPos.y - 1);
+                _otherPiece = GM.GetPieceAt(_piece.GridPos.x, _piece.GridPos.y - 1);
                 break;
             case eSwipeDir.left:
-                otherPiece = GM.GetPieceAt(piece.GridPos.x - 1, piece.GridPos.y);
+                _otherPiece = GM.GetPieceAt(_piece.GridPos.x - 1, _piece.GridPos.y);
                 break;
             case eSwipeDir.right:
-                otherPiece = GM.GetPieceAt(piece.GridPos.x + 1, piece.GridPos.y);
+                _otherPiece = GM.GetPieceAt(_piece.GridPos.x + 1, _piece.GridPos.y);
                 break;
             default:
                 Debug.Log("Couldn't find the swipeDirection " + swipeDir.ToString() + ", canceling movement & match check");
                 break;
         }
 
-        //if they are of the same type, play the "could not swap" animation
-        if (piece.MatchesWith(otherPiece))
+        // if the pieces are the same, show attempted swapping
+        if (_piece.MatchesWith(_otherPiece))
         {
-            StartCoroutine(piece.TileObject.SwapPosition(new Vector3(otherPiece.GridPos.x, otherPiece.GridPos.y, 0), true));
-            StartCoroutine(otherPiece.TileObject.SwapPosition(new Vector3(piece.GridPos.x, piece.GridPos.y, 0), true));
+            StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+            StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+            GM.SetGameState(eGameState.running);
+            return;
+        }
+        // if they are not the same, swap, then check for matches
+        else
+        {
+            _piece.Swap(_otherPiece);
+            if (CalculateMatches(GM.FruitToCheck(_piece)) | CalculateMatches(GM.FruitToCheck(_otherPiece)))
+            {
+                SwapPieces(_piece, _otherPiece);
+                RearrangePiecePositions(curMatches);                
+                return;
+            }
+            else
+            {
+                _piece.Swap(_otherPiece);
+                StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+                StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+                GM.SetGameState(eGameState.running);
+                return;
+            }
+        }
+
+
+
+
+        //if they are of the same type, play the "could not swap" animation
+        if (_piece.MatchesWith(_otherPiece))
+        {
+            StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+            StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+            GM.SetGameState(eGameState.running);
             return;
         }
 
-        piece.Swap(otherPiece);
+        _piece.Swap(_otherPiece);
 
         //check if any piece has a match
-        if (CalculateMatches(GM.FruitToCheck(piece)) && CalculateMatches(GM.FruitToCheck(otherPiece)))
+        //both match = double score
+        if (CalculateMatches(GM.FruitToCheck(_piece)) && CalculateMatches(GM.FruitToCheck(_otherPiece)))
         {
             //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
             //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
             tempScore = ScoreMultipliedBy(2);
-            SuccessfulSwap(piece, otherPiece);
+            SwapPieces(_piece, _otherPiece);
             return;
         }
-        else if (CalculateMatches(GM.FruitToCheck(piece)) | CalculateMatches(GM.FruitToCheck(otherPiece)))
+        else if (CalculateMatches(GM.FruitToCheck(_piece)) | CalculateMatches(GM.FruitToCheck(_otherPiece)))
         {
             //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
             //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
-            SuccessfulSwap(piece, otherPiece);
+            SwapPieces(_piece, _otherPiece);
             return;
         }
         //no matches found, play "could not swap" animation and put them in their original positions
-        StartCoroutine(piece.TileObject.SwapPosition(new Vector3(piece.GridPos.x, piece.GridPos.y, 0), true));
-        StartCoroutine(otherPiece.TileObject.SwapPosition(new Vector3(otherPiece.GridPos.x, otherPiece.GridPos.y, 0), true));
-        otherPiece.Swap(piece);
+        StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+        StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+        _otherPiece.Swap(_piece);
         GM.SetGameState(eGameState.running);
     }
 
-    private void SuccessfulSwap(Piece piece, Piece otherPiece)
+    /// <summary>
+    /// Swaps the two pieces and subtracts a move
+    /// </summary>
+    private void SwapPieces(Piece piece, Piece otherPiece)
     {
         GM.SubstractOneMove();
         StartCoroutine(piece.TileObject.SwapPosition(new Vector3(piece.GridPos.x, piece.GridPos.y, 0)));
-        StartCoroutine(otherPiece.TileObject.SwapPosition(new Vector3(otherPiece.GridPos.x, otherPiece.GridPos.y, 0)));
-        RearrangePiecePosInGrid(curMatches);
+        StartCoroutine(otherPiece.TileObject.SwapPosition(new Vector3(otherPiece.GridPos.x, otherPiece.GridPos.y, 0)));        
     }
 
+    /// <summary>
+    /// Clears all pieces in the given list, gives the empty pieces a new type and makes all pieces fall down 
+    /// </summary>
+    private void RearrangePiecePositions(List<Piece> matchedPieces)
+    {
+        //how many tiles are going to be empty due to destroyed matches
+        int[] freeTileCount = new int[GM.Width];
+
+        for (int i = 0; i < matchedPieces.Count; i++)
+        {
+            int xPos = matchedPieces[i].GridPos.x;
+            freeTileCount[xPos] += 1;
+        }
+
+        //swap each matched piece with pieces above it until it reached top position
+        foreach (Piece matchedP in matchedPieces)
+        {
+            int start = matchedP.GridPos.y + 1;
+            int posX = matchedP.GridPos.x;
+            for (int y = start; y < GM.Height; y++)
+            {
+                Piece upperPiece = GM.GetPieceAt(posX, y);
+                matchedP.Swap(upperPiece);
+            }
+        }
+
+        //set fall pos and new type for each matched piece
+        foreach (Piece matchedP in matchedPieces)
+        {
+            matchedP.SetFallPosition(matchedP.GridPos.y + freeTileCount[matchedP.GridPos.x]);
+            int newType = GM.RandomType();
+            matchedP.SetNewType(newType);
+        }
+        StartCoroutine(DestroyMatches());
+    }
+
+    private IEnumerator DestroyMatches()
+    {
+        foreach (Piece match in curMatches)
+        {
+            StartCoroutine(match.TileObject.Deactivate(match.FallPosY, match.Type));
+            GameManager.Instance.AddToScore(1);
+        }
+        curMatches.Clear();
+        ResetScore();
+        //wait for destruction to finish
+        yield return new WaitForSeconds(0.6f);
+        StartCoroutine(CollapseColumns());
+    }
 
     /// <summary>
-    /// Checks for possible matches, returns true if there are enough and calls the destroy method
+    /// Starts falling animation for all pieces, waits until every piece has stopped moving
+    /// </summary>
+    private IEnumerator CollapseColumns()
+    {
+        yield return new WaitForSeconds(0.25f);
+        //make everything fall
+        for (int x = 0; x < GM.Width; x++)
+        {
+            for (int y = 0; y < GM.Height; y++)
+            {
+                Piece piece = GM.GetPieceAt(x, y);
+                //if (piece == null)
+                //    print("nothing in grid at " + x + "," + y);
+                //else
+                StartCoroutine(piece.TileObject.FallToNewPos(
+                    new Vector3(piece.GridPos.x, piece.GridPos.y, 0)));
+            }
+        }
+        yield return null;
+        //keep falling until all pieces have reached their destination
+        GM.SetGameState(eGameState.falling);
+        while (AnyPieceMoving())
+            yield return new WaitForSeconds(0.1f);
+
+        GM.SetGameState(eGameState.matching);
+        yield return new WaitForSeconds(0.25f);
+
+        if (!CheckWholeGridForMatches() && !GM.GameEnd())
+            GM.SetGameState(eGameState.running);
+    }
+
+    /// <summary>
+    /// True if any piece on the board still has Moving = true
+    /// </summary>
+    private bool AnyPieceMoving()
+    {
+        foreach (Piece p in GM.Pieces)
+        {
+            if (p.TileObject.Moving)
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns true if there are matches
     /// </summary>
     private bool CalculateMatches(Piece[] piecesToCheck)
     {
         List<Piece> allMatches = Matches(piecesToCheck);
-        int tempScore = 0;
-
-        if (allMatches.Count < 3)
-        {
+        if (allMatches.Count < 3)       
             return false;
-        }
-        foreach (Piece p in allMatches)
-        {
-            p.TileObject.Matched();
-        }
+
+        int _tempScore = 0;
+        
+        //foreach (Piece p in allMatches)
+        //{
+        //    p.TileObject.Matched();
+        //}
         //make sure we have no doubles in the list
         foreach (Piece piece in allMatches)
         {
             if (!curMatches.Contains(piece))
             {
                 curMatches.Add(piece);
-                tempScore += 1;
+                //_tempScore += 1;
             }
-            this.tempScore += CalculateMatchScore(tempScore);
+            //this.tempScore += CalculateMatchScore(_tempScore);
         }
         return true;
     }
+
+
+
 
     private int CalculateMatchScore(int oneMatchScore)
     {
@@ -251,100 +382,12 @@ public class CoreGame : MonoBehaviour
     }
 
     /// <summary>
-    /// Destroys all pieces in given list, rearranges positions of all pieces on the board
-    /// </summary>
-    private void RearrangePiecePosInGrid(List<Piece> matchedPieces)
-    {
-        //How many tiles are going to be empty due to matches
-        int[] freeTileCount = new int[GM.Width];
-
-        for (int i = 0; i < matchedPieces.Count; i++)
-        {
-            int xPos = matchedPieces[i].GridPos.x;
-            freeTileCount[xPos] += 1;
-        }
-
-        //swap each matched piece with pieces above it until it reached top position
-        foreach (Piece matchedP in matchedPieces)
-        {
-            int start = matchedP.GridPos.y + 1;
-            int posX = matchedP.GridPos.x;
-            for (int y = start; y < GM.Height; y++)
-            {
-                Piece upperPiece = GM.GetPieceAt(posX, y);
-                matchedP.Swap(upperPiece);
-            }
-        }
-
-        //set fall pos and new type for each matched piece
-        foreach (Piece matchedP in matchedPieces)
-        {
-            matchedP.SetFallPosition(matchedP.GridPos.y + freeTileCount[matchedP.GridPos.x]);
-            int newType = GM.RandomType();
-            matchedP.SetNewType(newType);
-        }
-        StartCoroutine(DestroyMatches());
-    }
-
-    private IEnumerator DestroyMatches()
-    {
-        foreach (Piece match in curMatches)
-        {
-            StartCoroutine(match.TileObject.Deactivate(match.FallPosY, GM.PieceSprites[match.Type]));
-        }
-        curMatches.Clear();
-        ResetScore();
-        //wait for destruction to finish
-        yield return new WaitForSeconds(0.6f);
-        StartCoroutine(CollapseColumns());
-    }
-
-    /// <summary>
     /// Adds temporary score to the final one and sets temp score to zero
     /// </summary>
     private void ResetScore()
     {
         GM.AddToScore(tempScore);
         tempScore = 0;
-    }
-
-    private bool AnyPieceMoving()
-    {
-        foreach (Piece p in GM.Pieces)
-        {
-            if (p.TileObject.Moving)
-                return true;
-        }
-        return false;
-    }
-
-    private IEnumerator CollapseColumns()
-    {
-        yield return new WaitForSeconds(0.25f);
-        //make everything fall
-        for (int x = 0; x < GM.Width; x++)
-        {
-            for (int y = 0; y < GM.Height; y++)
-            {
-                Piece piece = GM.GetPieceAt(x, y);
-                //if (piece == null)
-                //    print("nothing in grid at " + x + "," + y);
-                //else
-                StartCoroutine(piece.TileObject.FallToNewPos(
-                    new Vector3(piece.GridPos.x, piece.GridPos.y, 0)));
-            }
-        }
-        yield return null;
-        //keep falling until all pieces have reached their destination
-        GM.SetGameState(eGameState.falling);
-        while (AnyPieceMoving())
-            yield return new WaitForSeconds(0.1f);
-
-        GM.SetGameState(eGameState.matching);
-        yield return new WaitForSeconds(0.25f);
-
-        if (!CheckWholeGridForMatches() && !GM.GameEnd())
-            GM.SetGameState(eGameState.running);
     }
 
     /// <summary>
@@ -362,7 +405,7 @@ public class CoreGame : MonoBehaviour
         if (curMatches.Count > 0)
         {
             tempScore = ScoreMultipliedBy(matchCount);
-            RearrangePiecePosInGrid(curMatches);
+            RearrangePiecePositions(curMatches);
             return true;
         }
         return false;

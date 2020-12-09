@@ -33,6 +33,7 @@ public class BoardSpawn : MonoBehaviour
     {
         GameManager.OnStart += SetGM;
         GameManager.OnSetup += SetBoard;
+        GameManager.OnGameEnd += ResetBoard;
         //print("Boardspawn set all delegates");
     }
 
@@ -59,8 +60,8 @@ public class BoardSpawn : MonoBehaviour
         {
             for (int row = 0; row < GM.Width; row++)
             {
-                if (allBGTiles.Count < GM.Height * GM.Width)
-                    SpawnBoardTile(row, column);
+                //if (allBGTiles.Count < GM.Height * GM.Width)
+                //    SpawnBoardTile(row, column);
                 SpawnPiece(row, column);
             }
         }
@@ -106,7 +107,7 @@ public class BoardSpawn : MonoBehaviour
             GM.Pieces[x, y].SetNewType(spriteToUse);
         }
 
-        GM.Pieces[x, y].TileObject.SetSprite(GM.PieceSprites[spriteToUse]);
+        GM.Pieces[x, y].TileObject.SetGemType(spriteToUse);
         int ID = y * GM.Width + x;
         tile.name = ID.ToString();
     }

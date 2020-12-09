@@ -1,0 +1,31 @@
+TODO
+Scores ueberarbeiten
+-> ausrechnen gem count per move in heist fuer Highscore
+-> Highscores nach Tresaure size sortieren 1-3 pro size maybe
+
+Result Screen Buttons
+Highscore Screen neu machen
+Save System fuer Highscore
+Credits Screen 
+
+Code cleanup
+
+NICE TO HAVE
+Walk/Run Anim damit Rouge "von Screen zu Screen laufen kann"
+Handwriting Font fuer Name Input und Highscores
+SFX
+Sound Settings
+
+DONE
+UI Assets eingefuegt
+Title
+Startmenu Screen
+Gamemode Screen
+Ingame Info
+Result Screen mit Name Input
+Rogue Idle Animation
+How to play Animation & Help Screen
+Score ueberarbeiten 
+- 1 Gem = 1 Point
+- Total Gem Count im Result
+Shine Animation fuer Gems von Al einbauen

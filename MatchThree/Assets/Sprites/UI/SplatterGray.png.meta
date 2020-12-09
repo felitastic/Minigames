@@ -1,0 +1,383 @@
+fileFormatVersion: 2
+guid: f3eda5495cb7b9e469161b054474240e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2036368506707552840
+    second: SplatterGray_0
+  - first:
+      213: 9222680516815455334
+    second: SplatterGray_1
+  - first:
+      213: -2882165125332481244
+    second: SplatterGray_2
+  - first:
+      213: 388270798555925993
+    second: SplatterGray_3
+  - first:
+      213: 1371599801236856035
+    second: SplatterGray_4
+  - first:
+      213: 6982884380714301102
+    second: SplatterGray_5
+  - first:
+      213: -5810364435793756943
+    second: SplatterGray_6
+  - first:
+      213: -6124991966261917961
+    second: SplatterGray_0
+  - first:
+      213: 957092342564643869
+    second: SplatterGray_1
+  - first:
+      213: -1956713699908854732
+    second: SplatterGray_2
+  - first:
+      213: 3403935178528530262
+    second: SplatterGray_3
+  - first:
+      213: 7673457552780611897
+    second: SplatterGray_4
+  - first:
+      213: 871513200612927454
+    second: SplatterGray_5
+  - first:
+      213: -3820808704544752066
+    second: SplatterGray_6
+  - first:
+      213: 795899038020400971
+    second: SplatterGray_7
+  - first:
+      213: -2342319074131396273
+    second: SplatterGray_8
+  - first:
+      213: 121268471314151712
+    second: SplatterGray_9
+  - first:
+      213: -7609314088512195111
+    second: SplatterGray_10
+  - first:
+      213: -2091313139404944337
+    second: SplatterGray_11
+  - first:
+      213: 3583836673919782598
+    second: SplatterGray_12
+  - first:
+      213: -8630062308238433243
+    second: SplatterGray_13
+  - first:
+      213: 8423086803056765425
+    second: SplatterGray_14
+  - first:
+      213: -8962084863192047259
+    second: SplatterGray_15
+  - first:
+      213: -1256009890162300135
+    second: SplatterGray_16
+  - first:
+      213: -3009312207306709815
+    second: SplatterGray_17
+  - first:
+      213: -3460823911038030424
+    second: SplatterGray_18
+  - first:
+      213: -3994575090576804095
+    second: SplatterGray_19
+  - first:
+      213: 9060046978915607427
+    second: SplatterGray_20
+  - first:
+      213: -1040995803076560511
+    second: SplatterGray_21
+  - first:
+      213: -7355672608386011003
+    second: SplatterGray_22
+  - first:
+      213: 6683594573677066727
+    second: SplatterGray_23
+  - first:
+      213: -4833892556225020358
+    second: SplatterGray_24
+  - first:
+      213: -1330292262949158312
+    second: SplatterGray_25
+  - first:
+      213: -813337028662468322
+    second: SplatterGray_26
+  - first:
+      213: 349514798170608943
+    second: SplatterGray_27
+  - first:
+      213: -7845938708691234044
+    second: SplatterGray_28
+  - first:
+      213: -6645328008636117587
+    second: SplatterGray_29
+  - first:
+      213: -7143857715496759221
+    second: SplatterGray_30
+  - first:
+      213: 8743716900712555371
+    second: SplatterGray_31
+  - first:
+      213: 3737495486572194633
+    second: SplatterGray_32
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: 1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: -1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SplatterGray_0
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 2114
+        width: 583
+        height: 583
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b557edd1ad5db3e0800000000000000
+      internalID: -2036368506707552840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_1
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 2117
+        width: 574
+        height: 574
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66483b1f01b8dff70800000000000000
+      internalID: 9222680516815455334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_2
+      rect:
+        serializedVersion: 2
+        x: 1531
+        y: 2108
+        width: 542
+        height: 580
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42bc980c61e7008d0800000000000000
+      internalID: -2882165125332481244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_3
+      rect:
+        serializedVersion: 2
+        x: 2114
+        y: 2123
+        width: 565
+        height: 564
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ed4590fb3a636500800000000000000
+      internalID: 388270798555925993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_4
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 1513
+        width: 2396
+        height: 583
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ec18be80c6e80310800000000000000
+      internalID: 1371599801236856035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_5
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 930
+        width: 2332
+        height: 542
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 110, y: 85, z: 110, w: 85}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea6791ce85038e060800000000000000
+      internalID: 6982884380714301102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SplatterGray_6
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 333
+        width: 2330
+        height: 539
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fc33fc84507d5fa0800000000000000
+      internalID: -5810364435793756943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
