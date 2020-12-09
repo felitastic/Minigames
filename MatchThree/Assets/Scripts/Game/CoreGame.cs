@@ -83,42 +83,39 @@ public class CoreGame : MonoBehaviour
             }
         }
 
+        ////if they are of the same type, play the "could not swap" animation
+        //if (_piece.MatchesWith(_otherPiece))
+        //{
+        //    StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+        //    StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+        //    GM.SetGameState(eGameState.running);
+        //    return;
+        //}
 
+        //_piece.Swap(_otherPiece);
 
-
-        //if they are of the same type, play the "could not swap" animation
-        if (_piece.MatchesWith(_otherPiece))
-        {
-            StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
-            StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
-            GM.SetGameState(eGameState.running);
-            return;
-        }
-
-        _piece.Swap(_otherPiece);
-
-        //check if any piece has a match
-        //both match = double score
-        if (CalculateMatches(GM.FruitToCheck(_piece)) && CalculateMatches(GM.FruitToCheck(_otherPiece)))
-        {
-            //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
-            //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
-            tempScore = ScoreMultipliedBy(2);
-            SwapPieces(_piece, _otherPiece);
-            return;
-        }
-        else if (CalculateMatches(GM.FruitToCheck(_piece)) | CalculateMatches(GM.FruitToCheck(_otherPiece)))
-        {
-            //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
-            //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
-            SwapPieces(_piece, _otherPiece);
-            return;
-        }
-        //no matches found, play "could not swap" animation and put them in their original positions
-        StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
-        StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
-        _otherPiece.Swap(_piece);
-        GM.SetGameState(eGameState.running);
+        ////check if any piece has a match
+        ////both match = double score
+        //if (CalculateMatches(GM.FruitToCheck(_piece)) && CalculateMatches(GM.FruitToCheck(_otherPiece)))
+        //{
+        //    //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
+        //    //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
+        //    tempScore = ScoreMultipliedBy(2);
+        //    SwapPieces(_piece, _otherPiece);
+        //    return;
+        //}
+        //else if (CalculateMatches(GM.FruitToCheck(_piece)) | CalculateMatches(GM.FruitToCheck(_otherPiece)))
+        //{
+        //    //print(piece.tile.name + " swap Pos: " + piece.GridPos.x + "," + piece.GridPos.y);
+        //    //print(otherPiece.tile.name + " swap Pos: " + otherPiece.GridPos.x + "," + otherPiece.GridPos.y);
+        //    SwapPieces(_piece, _otherPiece);
+        //    return;
+        //}
+        ////no matches found, play "could not swap" animation and put them in their original positions
+        //StartCoroutine(_piece.TileObject.SwapPosition(new Vector3(_piece.GridPos.x, _piece.GridPos.y, 0), true));
+        //StartCoroutine(_otherPiece.TileObject.SwapPosition(new Vector3(_otherPiece.GridPos.x, _otherPiece.GridPos.y, 0), true));
+        //_otherPiece.Swap(_piece);
+        //GM.SetGameState(eGameState.running);
     }
 
     /// <summary>
@@ -161,7 +158,9 @@ public class CoreGame : MonoBehaviour
         foreach (Piece matchedP in matchedPieces)
         {
             matchedP.SetFallPosition(matchedP.GridPos.y + freeTileCount[matchedP.GridPos.x]);
+            int oldType = matchedP.Type;
             int newType = GM.RandomType();
+            GM.UpdateGemSortLists(matchedP, oldType, newType);
             matchedP.SetNewType(newType);
         }
         StartCoroutine(DestroyMatches());

@@ -16,3 +16,16 @@ public enum eSwipeDir
     left = 2,
     right = -2
 }
+
+public enum eMenuScene 
+{ 
+    Start, 
+    GameMode, 
+    Ingame, 
+    Help, 
+    Tutorial,
+    NormalResult, 
+    ScoringResult,
+    Highscore, 
+    Credits 
+}

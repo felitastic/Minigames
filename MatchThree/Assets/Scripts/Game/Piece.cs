@@ -10,7 +10,7 @@ public class Piece
 
     // Constructor
     public Piece(int xPos, int yPos, Tile tile, int type)
-    {        
+    {                
         this.TileObject = tile;
         this.Type = type;
         GridPos = new IntPos2D(xPos, yPos);
@@ -23,6 +23,7 @@ public class Piece
     public void SetNewType(int type)
     {
         this.Type = type;
+        TileObject.SetNewType(type);
     }
 
     /// <summary>

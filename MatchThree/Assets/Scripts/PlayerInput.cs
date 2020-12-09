@@ -30,7 +30,7 @@ public class PlayerInput : MonoBehaviour
                 if (clickedPiece == null)
                     return;
 
-                print("clicked on " + clickedPiece.name);
+                //print("clicked on " + clickedPiece.name);
                 clickEndPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -cam.transform.position.z));
                 float distX = Mathf.Abs(clickEndPos.x - clickStartPos.x);
                 float distY = Mathf.Abs(clickEndPos.y - clickStartPos.y);

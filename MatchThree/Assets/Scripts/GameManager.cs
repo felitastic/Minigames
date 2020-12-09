@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 /// <summary>
 /// Knows the hard facts such as game state, board size, max moves and all the Tile objects on the grid
@@ -9,7 +10,7 @@ public class GameManager : Singleton<GameManager>
 {
     protected GameManager() { }
     private SaveSystem saveSystem;
-    public List<ScoreEntry> allScores { get; private set; }
+    public Scoreboard[] HighScores = new Scoreboard[3];
 
     //[Range(4,18)]
     public int Width { get; protected set; }
@@ -26,6 +27,8 @@ public class GameManager : Singleton<GameManager>
     public Piece[,] Pieces { get; private set; }
     public eGameState GameState { get; private set; }
 
+    private List<Piece>[] piecesSortedByType = new List<Piece>[6];
+
     public static event System.Action<GameManager> OnStart = delegate { };
     public static event System.Action OnSetup = delegate { };
     public static event System.Action<int> OnScoreUpdate = delegate { };
@@ -34,7 +37,13 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        allScores = new List<ScoreEntry>();
+        piecesSortedByType[0] = new List<Piece>();
+        piecesSortedByType[1] = new List<Piece>();
+        piecesSortedByType[2] = new List<Piece>();
+        piecesSortedByType[3] = new List<Piece>();
+        piecesSortedByType[4] = new List<Piece>();
+        piecesSortedByType[5] = new List<Piece>();
+        //allScores = new List<ScoreEntry>();
         Pieces = new Piece[0, 0];
         //print("piece count: " + Pieces.Length);
         SetGameState(eGameState.setup);
@@ -50,22 +59,22 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    private void BaseScore()
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                allScores.Add(new ScoreEntry(j, "Granny", 111 * i));
-            }
-        }
-        saveSystem.Save(allScores);
-    }
+    //private void BaseScore()
+    //{
+    //    for (int j = 0; j < 9; j++)
+    //    {
+    //        for (int i = 0; i < 5; i++)
+    //        {
+    //            allScores.Add(new ScoreEntry(j, "Granny", 111 * i));
+    //        }
+    //    }
+    //    saveSystem.Save(allScores);
+    //}
 
-    public void SetScores(List<ScoreEntry> scores)
-    {
-        allScores = scores;
-    }
+    //public void SetScores(List<ScoreEntry> scores)
+    //{
+    //    allScores = scores;
+    //}
 
     public void StartNewGame(int boardSize, int sessionLength)
     {
@@ -104,6 +113,7 @@ public class GameManager : Singleton<GameManager>
 
         ResetGame();
     }
+    
 
     /// <summary>
     /// Sets all parameters to their initial value, sets board size and camera position
@@ -194,8 +204,8 @@ public class GameManager : Singleton<GameManager>
         {
             SetGameState(eGameState.end);
             //TODO: save score
-            allScores.Add(new ScoreEntry(1, "Blubbi", FullScore));
-            saveSystem.Save(allScores);
+            //allScores.Add(new ScoreEntry(1, "Blubbi", FullScore));
+            //saveSystem.Save(allScores);
             OnGameEnd();
             return true;
         }
@@ -276,26 +286,63 @@ public class GameManager : Singleton<GameManager>
         return neighbouringPiece;
     }
 
-    public ScoreEntry[] CurrentTop5Of(int boardID)
-    {
-        ScoreEntry[] scores = new ScoreEntry[5];
+    //public ScoreEntry[] CurrentTop5Of(int boardID)
+    //{
+    //    ScoreEntry[] scores = new ScoreEntry[5];
 
-        scores = (from score in allScores
-                  where score.boardID == boardID
-                  orderby score.score
-                  select score).ToArray();
-        print("top score " + scores[0] + ", lowest score " + scores[4]);
-        return scores;
+    //    scores = (from score in allScores
+    //              where score.boardID == boardID
+    //              orderby score.score
+    //              select score).ToArray();
+    //    print("top score " + scores[0] + ", lowest score " + scores[4]);
+    //    return scores;
+    //}
+
+    //public bool AddToScoreList(ScoreEntry newEntry)
+    //{
+    //    ScoreEntry[] top5 = CurrentTop5Of(newEntry.boardID);
+    //    //TODO: add new score to list if possible, send it to UI
+    //    //check if score is higher than one of the scores in the list
+    //    //move all others down and delete last
+    //    //somehow save which one is the new one for highlighting
+    //    //profit
+    //    return true;
+    //}
+
+
+    public IEnumerator GemShimmer()
+    {
+        int type = 0;
+        float timeToWait = Random.Range(2.5f, 4.0f);
+        bool inGame = true;
+        while(inGame)
+        {
+            if (GameState == eGameState.end)
+                yield break;            
+
+            yield return new WaitForSeconds(timeToWait);
+
+            foreach(Piece piece in piecesSortedByType[type])
+            {
+                piece.TileObject.PlayShimmerAnim();
+            }
+            type = type < 5 ? type + 1 : 0;
+            timeToWait = Random.Range(2.5f, 4.0f);
+            yield return null;
+        }
     }
 
-    public bool AddToScoreList(ScoreEntry newEntry)
+    public void SortGemsByColor()
     {
-        ScoreEntry[] top5 = CurrentTop5Of(newEntry.boardID);
-        //TODO: add new score to list if possible, send it to UI
-        //check if score is higher than one of the scores in the list
-        //move all others down and delete last
-        //somehow save which one is the new one for highlighting
-        //profit
-        return true;
+        foreach (Piece piece in Pieces)
+        {
+            piecesSortedByType[piece.Type].Add(piece);
+        }
+    }
+
+    public void UpdateGemSortLists(Piece piece, int oldType, int newType)
+    {
+        piecesSortedByType[oldType].Remove(piece);
+        piecesSortedByType[newType].Add(piece);
     }
 }

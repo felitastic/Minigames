@@ -21,6 +21,7 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private float fallSpeed = 5.0f;
     private float destroyAnimTime;
+    public int Type { get; private set; }
     public bool Moving { get; private set; }
 
     private void Awake()
@@ -30,6 +31,10 @@ public class Tile : MonoBehaviour
         anim = GetComponent<Animator>();
         col = GetComponent<BoxCollider2D>();
         GetAnimClipTime();
+    }
+    public void SetNewType(int type)
+    {
+        this.Type = type;
     }
 
     //public void Matched(bool isMatched = true)
@@ -64,9 +69,9 @@ public class Tile : MonoBehaviour
     /// Called by the fruit class when the sprite/type changes
     /// </summary>
     /// <param name="sprite"></param>
-    public void SetGemType(int pType)
+    public void SetGemSprite()
     {
-        anim.SetInteger("type", pType);
+        anim.SetInteger("type", Type);
         //spriteRend.sprite = GameManager.Instance.PieceSprites[pType];
     }
 
@@ -163,7 +168,7 @@ public class Tile : MonoBehaviour
         //        destroying = false;
 
         //    yield return null;
-        //}
+        //}        
         anim.SetBool("destroy", true);
         col.enabled = false;
         yield return new WaitForSeconds(destroyAnimTime);
@@ -174,8 +179,16 @@ public class Tile : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x, fallPosY, 0);
         //Matched(false);
-        SetGemType(pType);
+        SetGemSprite();
         col.enabled = true;
         anim.SetBool("destroy", false);
+    }
+
+    public void PlayShimmerAnim()
+    {
+        if (!anim.GetBool("destroy"))
+        {
+            anim.SetTrigger("glim");
+        }
     }
 }

@@ -66,7 +66,9 @@ public class BoardSpawn : MonoBehaviour
             }
         }
         SetMask();
+        GM.SortGemsByColor();
         GM.SetGameState(eGameState.running);
+        StartCoroutine(GM.GemShimmer());
     }
 
     /// <summary>
@@ -107,7 +109,7 @@ public class BoardSpawn : MonoBehaviour
             GM.Pieces[x, y].SetNewType(spriteToUse);
         }
 
-        GM.Pieces[x, y].TileObject.SetGemType(spriteToUse);
+        GM.Pieces[x, y].TileObject.SetGemSprite();
         int ID = y * GM.Width + x;
         tile.name = ID.ToString();
     }

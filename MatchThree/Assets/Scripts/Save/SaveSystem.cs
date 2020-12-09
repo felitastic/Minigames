@@ -78,7 +78,7 @@ public class SaveSystem : MonoBehaviour
             scores.Add(new ScoreEntry(boardID, name, score));
         }
 
-        GameManager.Instance.SetScores(scores);
+        //GameManager.Instance.SetScores(scores);
         print("loaded " + scores.Count + " scores");
     }
 

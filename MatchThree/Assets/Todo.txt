@@ -1,12 +1,14 @@
 TODO
+BUG: moves sind bei erstem start oft auf max trotz short einstellung
+
 Scores ueberarbeiten
 -> ausrechnen gem count per move in heist fuer Highscore
 -> Highscores nach Tresaure size sortieren 1-3 pro size maybe
 
-Result Screen Buttons
-Highscore Screen neu machen
+Results speichern
 Save System fuer Highscore
 Credits Screen 
+option gems zu reloaden wenn man stuck is weil keine match optionen, kostet 1 move
 
 Code cleanup
 
@@ -15,6 +17,8 @@ Walk/Run Anim damit Rouge "von Screen zu Screen laufen kann"
 Handwriting Font fuer Name Input und Highscores
 SFX
 Sound Settings
+game pausieren wenn man im help menu is
+ODER help menu nur erlauben, wenn keine pieces moven
 
 DONE
 UI Assets eingefuegt
@@ -29,3 +33,51 @@ Score ueberarbeiten
 - 1 Gem = 1 Point
 - Total Gem Count im Result
 Shine Animation fuer Gems von Al einbauen
+Result Name Input auf 10 Zeichen beschraenken
+Result Screen Buttons
+Highscore Screen neu machen
+UI Scene Management cleanup
+Bugfixing durch den Gem Shine
+
+----------
+DIALOGE
+startmenu
+"welcome to our hideout"
+play hover
+"i'm itching to steal some gems!"
+score hover
+"only the best thieves make it there"
+credit hover
+"i think those people build/created the hideout"
+quit button
+"one never truly quits!"
+
+highscore menu
+"I always look at these names in awe"
+
+crecdit menu
+"we're only here thanks to these people!"
+
+gamemode menu
+"lets plan our heist!"
+treasure hover
+"the bigger the treasure the easier the heist"
+length hover
+"how much time you got?"
+
+help
+"what's up?"
+how to hover
+"i can explain the basics of thieving to you"
+resume hover
+"ready to get back to the action?"
+back to title hover
+"wanna go back to the hideout?"
+quit hover
+"you really gonna leave in the middle of a heist?"
+
+result screen
+- wenn man nicht aufs scoreboard gekommen ist
+"that was a decent haul"
+- wenn man aufs scoreboard gekommen ist
+"great haul! you're gonna be a legend!"
